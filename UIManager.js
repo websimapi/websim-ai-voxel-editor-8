@@ -42,8 +42,19 @@ class UIManager {
             alert('Please enter a name for your world.');
             return;
         }
-        this.saveManager.save(name);
-        alert(`World saved as "${name}"`);
+
+        const saves = this.saveManager.getSaves();
+        const existingSave = saves.named.find(save => save.name === name);
+
+        if (existingSave) {
+            if (confirm(`A world named "${name}" already exists. Do you want to overwrite it?`)) {
+                this.saveManager.save(name);
+                alert(`World "${name}" has been overwritten.`);
+            }
+        } else {
+            this.saveManager.save(name);
+            alert(`World saved as "${name}".`);
+        }
     }
 
     toggleLoadMenu() {
