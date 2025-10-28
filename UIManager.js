@@ -14,6 +14,10 @@ class UIManager {
         this.loadMenu = document.getElementById('load-menu');
         this.loadMenuContent = document.getElementById('load-menu-content');
 
+        this.modalContainer = document.getElementById('modal-container');
+        this.modalText = document.getElementById('modal-text');
+        this.modalButtons = document.getElementById('modal-buttons');
+
         this.materials = [];
         this.activeMaterial = null;
         this.saveManager = null;
@@ -36,10 +40,10 @@ class UIManager {
         this.hideLoader();
     }
 
-    onSaveClick() {
+    async onSaveClick() {
         const name = this.saveNameInput.value.trim();
         if (!name) {
-            alert('Please enter a name for your world.');
+            this.showNotification('Please enter a name for your world.');
             return;
         }
 
@@ -47,13 +51,14 @@ class UIManager {
         const existingSave = saves.named.find(save => save.name === name);
 
         if (existingSave) {
-            if (confirm(`A world named "${name}" already exists. Do you want to overwrite it?`)) {
+            const overwrite = await this.showConfirmation(`A world named "${name}" already exists. Do you want to overwrite it?`);
+            if (overwrite) {
                 this.saveManager.save(name);
-                alert(`World "${name}" has been overwritten.`);
+                this.showNotification(`World "${name}" has been overwritten.`);
             }
         } else {
             this.saveManager.save(name);
-            alert(`World saved as "${name}".`);
+            this.showNotification(`World saved as "${name}".`);
         }
     }
 
@@ -111,7 +116,8 @@ class UIManager {
 
     async onLoadClick(saveKey, name = null) {
         if (this.saveManager.isDirty) {
-            if (!confirm('You have unsaved changes. Are you sure you want to load a new world?')) {
+            const proceed = await this.showConfirmation('You have unsaved changes. Are you sure you want to load a new world? Your current work will be lost unless saved.');
+            if (!proceed) {
                 return;
             }
         }
@@ -125,7 +131,7 @@ class UIManager {
     async onGenerateClick() {
         const prompt = this.promptInput.value;
         if (!prompt) {
-            alert('Please enter a prompt for the texture.');
+            this.showNotification('Please enter a prompt for the texture.');
             return;
         }
 
@@ -140,7 +146,7 @@ class UIManager {
             this.addTextureToPalette(texture);
         } catch (error) {
             console.error('Error generating texture:', error);
-            alert('Failed to generate texture. Please try again.');
+            this.showNotification('Failed to generate texture. Please try again.');
         } finally {
             this.hideLoader();
         }
@@ -199,6 +205,47 @@ class UIManager {
     hideLoader() {
         this.loader.classList.add('hidden');
         this.generateBtn.disabled = false;
+    }
+
+    showNotification(message) {
+        this.modalText.textContent = message;
+        this.modalButtons.innerHTML = '';
+
+        const okButton = document.createElement('button');
+        okButton.textContent = 'OK';
+        okButton.onclick = () => this.hideModal();
+        this.modalButtons.appendChild(okButton);
+
+        this.modalContainer.classList.remove('hidden');
+    }
+
+    showConfirmation(message) {
+        return new Promise((resolve) => {
+            this.modalText.textContent = message;
+            this.modalButtons.innerHTML = '';
+
+            const yesButton = document.createElement('button');
+            yesButton.textContent = 'Yes';
+            yesButton.onclick = () => {
+                this.hideModal();
+                resolve(true);
+            };
+
+            const noButton = document.createElement('button');
+            noButton.textContent = 'No';
+            noButton.onclick = () => {
+                this.hideModal();
+                resolve(false);
+            };
+
+            this.modalButtons.appendChild(yesButton);
+            this.modalButtons.appendChild(noButton);
+            this.modalContainer.classList.remove('hidden');
+        });
+    }
+
+    hideModal() {
+        this.modalContainer.classList.add('hidden');
     }
 }
 

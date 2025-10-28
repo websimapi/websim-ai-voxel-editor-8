@@ -195,6 +195,50 @@ button:hover {
     border-width: 4px;
 }
 
+#modal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+#modal-container.hidden {
+    display: none;
+}
+
+#modal-content {
+    background-color: #1a1a1a;
+    border: 4px solid #fff;
+    padding: 30px;
+    text-align: center;
+    max-width: 400px;
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+}
+
+#modal-text {
+    margin-bottom: 20px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+#modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+#modal-buttons button {
+    padding: 10px 20px;
+    min-width: 100px;
+}
+
+
 @media (max-width: 768px) {
     #ui-panel {
         width: 100%;
