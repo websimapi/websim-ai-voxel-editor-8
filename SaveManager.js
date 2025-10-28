@@ -33,7 +33,9 @@ class SaveManager {
             this.currentSaveName = name;
         } else {
             const timestamp = new Date().toISOString();
-            saveKey = AUTOSAVE_PREFIX + timestamp;
+            const worldName = this.currentSaveName || 'New World';
+            const backupName = `${worldName} - backup - ${timestamp}`;
+            saveKey = AUTOSAVE_PREFIX + backupName;
         }
 
         const saveData = {
@@ -124,8 +126,11 @@ class SaveManager {
                     key: key
                 });
             } else if (key.startsWith(AUTOSAVE_PREFIX)) {
+                const backupName = key.replace(AUTOSAVE_PREFIX, '');
+                // Format the timestamp part for readability
+                const displayName = backupName.replace('T', ' ').substring(0, backupName.lastIndexOf('.'));
                 saves.backups.push({
-                    name: key.replace(AUTOSAVE_PREFIX, '').replace('T', ' ').substring(0, 19),
+                    name: displayName,
                     key: key
                 });
             }
