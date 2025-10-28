@@ -33,7 +33,7 @@ class SaveManager {
             this.currentSaveName = name;
         } else {
             const timestamp = new Date().toISOString();
-            const worldName = this.currentSaveName || 'Unsaved World';
+            const worldName = this.currentSaveName || 'New World';
             const backupName = `${worldName} - ${timestamp}`;
             saveKey = AUTOSAVE_PREFIX + backupName;
         }
