@@ -33,8 +33,8 @@ class SaveManager {
             this.currentSaveName = name;
         } else {
             const timestamp = new Date().toISOString();
-            const worldName = this.currentSaveName || 'New World';
-            const backupName = `${worldName} - backup - ${timestamp}`;
+            const worldName = this.currentSaveName || 'Unsaved World';
+            const backupName = `${worldName} - ${timestamp}`;
             saveKey = AUTOSAVE_PREFIX + backupName;
         }
 
@@ -126,17 +126,31 @@ class SaveManager {
                     key: key
                 });
             } else if (key.startsWith(AUTOSAVE_PREFIX)) {
-                const backupName = key.replace(AUTOSAVE_PREFIX, '');
-                // Format the timestamp part for readability
-                const displayName = backupName.replace('T', ' ').substring(0, backupName.lastIndexOf('.'));
-                saves.backups.push({
-                    name: displayName,
-                    key: key
-                });
+                const backupKey = key.replace(AUTOSAVE_PREFIX, '');
+                const parts = backupKey.split(' - ');
+                const timestamp = parts.pop();
+                const worldName = parts.join(' - ');
+                
+                try {
+                    const date = new Date(timestamp);
+                    const formattedDate = date.toLocaleString();
+                    saves.backups.push({
+                        name: `${worldName} (${formattedDate})`,
+                        key: key,
+                        date: date
+                    });
+                } catch(e) {
+                     // Could be an old format, just display raw
+                    saves.backups.push({
+                        name: backupKey,
+                        key: key,
+                        date: new Date(0) // push to bottom
+                    });
+                }
             }
         }
         // Sort backups by date, newest first
-        saves.backups.sort((a, b) => b.key.localeCompare(a.key));
+        saves.backups.sort((a, b) => b.date - a.date);
         return saves;
     }
 

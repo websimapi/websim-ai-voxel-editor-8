@@ -87,11 +87,34 @@ button:hover {
     background-color: #6dd46d;
 }
 
+#save-section {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+#save-section input {
+    flex-grow: 1;
+}
+
+#save-section button {
+    margin-top: 0;
+    flex-shrink: 0;
+    width: auto;
+    padding: 8px 15px;
+}
+
+
 #load-menu {
     margin-top: 15px;
     background-color: #222;
     border: 2px solid #fff;
     padding: 10px;
+}
+
+#load-menu-content {
+    max-height: 250px;
+    overflow-y: auto;
 }
 
 #load-menu h3 {
@@ -114,9 +137,7 @@ button:hover {
 #load-menu ul {
     list-style: none;
     padding: 0;
-    margin: 0;
-    max-height: 150px;
-    overflow-y: auto;
+    margin: 0 0 15px 0;
 }
 
 #load-menu li {

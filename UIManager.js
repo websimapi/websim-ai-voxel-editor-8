@@ -12,9 +12,7 @@ class UIManager {
         this.saveBtn = document.getElementById('save-btn');
         this.loadBtn = document.getElementById('load-btn');
         this.loadMenu = document.getElementById('load-menu');
-        this.namedSavesList = document.getElementById('named-saves-list');
-        this.backupSavesList = document.getElementById('backup-saves-list');
-        this.backupsArrow = document.getElementById('backups-arrow');
+        this.loadMenuContent = document.getElementById('load-menu-content');
 
         this.materials = [];
         this.activeMaterial = null;
@@ -23,7 +21,6 @@ class UIManager {
         this.generateBtn.addEventListener('click', this.onGenerateClick.bind(this));
         this.saveBtn.addEventListener('click', this.onSaveClick.bind(this));
         this.loadBtn.addEventListener('click', this.toggleLoadMenu.bind(this));
-        this.backupsArrow.addEventListener('click', this.toggleBackups.bind(this));
         
         // this.loadInitialTexture(); // Moved to main.js to be awaited
     }
@@ -57,29 +54,47 @@ class UIManager {
             this.loadMenu.classList.add('hidden');
         }
     }
-    
-    toggleBackups() {
-        this.backupSavesList.classList.toggle('hidden');
-        this.backupsArrow.classList.toggle('collapsed');
-    }
 
     populateLoadMenu() {
         const saves = this.saveManager.getSaves();
-        this.namedSavesList.innerHTML = '';
-        this.backupSavesList.innerHTML = '';
+        this.loadMenuContent.innerHTML = ''; // Clear previous content
 
-        saves.named.forEach(save => {
-            const li = document.createElement('li');
-            li.textContent = save.name;
-            li.addEventListener('click', () => this.onLoadClick(save.key, save.name));
-            this.namedSavesList.appendChild(li);
+        let content = '';
+
+        content += '<h3>Named Saves</h3>';
+        content += '<ul id="named-saves-list">';
+        if (saves.named.length > 0) {
+            saves.named.forEach(save => {
+                content += `<li data-key="${save.key}" data-name="${save.name}">${save.name}</li>`;
+            });
+        } else {
+            content += '<li>No named saves yet.</li>';
+        }
+        content += '</ul>';
+
+        content += '<h3>Backups</h3>';
+        content += '<ul id="backup-saves-list">';
+        if (saves.backups.length > 0) {
+            saves.backups.forEach(save => {
+                content += `<li data-key="${save.key}">${save.name}</li>`;
+            });
+        } else {
+            content += '<li>No backups found.</li>';
+        }
+        content += '</ul>';
+
+        this.loadMenuContent.innerHTML = content;
+
+        // Add event listeners after populating
+        this.loadMenuContent.querySelectorAll('#named-saves-list li').forEach(li => {
+            if (li.dataset.key) {
+                li.addEventListener('click', () => this.onLoadClick(li.dataset.key, li.dataset.name));
+            }
         });
-
-        saves.backups.forEach(save => {
-            const li = document.createElement('li');
-            li.textContent = save.name;
-            li.addEventListener('click', () => this.onLoadClick(save.key));
-            this.backupSavesList.appendChild(li);
+        this.loadMenuContent.querySelectorAll('#backup-saves-list li').forEach(li => {
+            if (li.dataset.key) {
+                li.addEventListener('click', () => this.onLoadClick(li.dataset.key));
+            }
         });
     }
 

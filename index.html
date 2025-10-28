@@ -26,14 +26,15 @@
             </div>
             <div class="ui-section">
                 <h2>Save / Load</h2>
-                <input type="text" id="save-name-input" placeholder="World Name">
-                <button id="save-btn">Save World</button>
+                <div id="save-section">
+                    <input type="text" id="save-name-input" placeholder="World Name">
+                    <button id="save-btn">Save World</button>
+                </div>
                 <button id="load-btn">Load World</button>
                 <div id="load-menu" class="hidden">
-                    <h3>Named Saves</h3>
-                    <ul id="named-saves-list"></ul>
-                    <h3>Backups <span id="backups-arrow">▼</span></h3>
-                    <ul id="backup-saves-list" class="hidden"></ul>
+                    <div id="load-menu-content">
+                         <!-- Content will be populated by UIManager -->
+                    </div>
                 </div>
             </div>
              <div class="ui-section">
