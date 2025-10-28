@@ -56,8 +56,9 @@ class SaveManager {
         });
 
         localStorage.setItem(saveKey, JSON.stringify(saveData));
+        this.isDirty = false; // Should be reset on any save
+
         if(name) {
-            this.isDirty = false;
             console.log(`World saved as '${name}'.`);
         } else {
             console.log('Autosave complete.');
@@ -149,7 +150,15 @@ class SaveManager {
         if (this.isDirty) {
             event.preventDefault();
             // Most browsers show a generic message, but this is required for it to trigger
-            event.returnValue = ''; 
+            event.returnValue = '';
+
+            // If the user decides to stay, save the work immediately.
+            // This timeout will only execute if the page unload is cancelled.
+            setTimeout(() => {
+                this.save(); // This will be an autosave
+                console.log('Work saved automatically after cancelling page unload.');
+            }, 100);
+
             return '';
         }
     }
